@@ -25,5 +25,16 @@ namespace WebApiAutores.Controller
             await context.SaveChangesAsync();
             return Ok();
         }
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(Autor autor, int id)
+        {
+            if (autor.Id != id)
+            {
+                return BadRequest("El id del autor no coincide con el id de la URL");
+            }
+            context.Update(autor);
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }
