@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApiAutores.Entidades;
 
 namespace WebApiAutores.Controller
@@ -7,14 +8,22 @@ namespace WebApiAutores.Controller
     [Route("api/autores")]
     public class AutoresController: ControllerBase
     {
-        [HttpGet]
-        public ActionResult<List<Autor>> Get()
+        private readonly ApplicationsDbContext context;
+        public AutoresController(ApplicationsDbContext context)
         {
-            return new List<Autor>()
-            {
-                new Autor() { Id = 1, Nombre = "Felipe"},
-                new Autor() { Id = 2, Nombre = "Claudia"}
-            };
+            this.context = context;
+        }
+        [HttpGet]
+        public async Task<ActionResult<List<Autor>>> Get()
+        {
+            return await context.Autores.ToListAsync();
+        }
+        [HttpPost]
+        public async Task<ActionResult> Post(Autor autor)
+        {
+            context.Add(autor);
+            await context.SaveChangesAsync();
+            return Ok();
         }
     }
 }
