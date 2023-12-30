@@ -5,7 +5,7 @@ using WebApiAutores.Entidades;
 namespace WebApiAutores.Controller
 {
     [ApiController]
-    [Route("api/autores")]
+    [Route("api/[controller]")]
     public class AutoresController: ControllerBase
     {
         private readonly ApplicationsDbContext context;
@@ -22,6 +22,20 @@ namespace WebApiAutores.Controller
         public async Task<ActionResult<Autor>> PrimerAutor()
         {
             return await context.Autores.Include(x => x.Libros).FirstOrDefaultAsync();
+        }
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Autor>> Get(int id)
+        {
+            var autor = await context.Autores.FirstOrDefaultAsync(x => x.Id == id);
+            if (autor == null) return NotFound();
+            return autor;
+        }
+        [HttpGet("{nombre}")]
+        public async Task<ActionResult<Autor>> Get(string nombre)
+        {
+            var autor = await context.Autores.FirstOrDefaultAsync(x => x.Nombre.Contains(nombre));
+            if (autor == null) return NotFound();
+            return autor;
         }
         [HttpPost]
         public async Task<ActionResult> Post(Autor autor)
