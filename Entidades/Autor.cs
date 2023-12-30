@@ -8,7 +8,7 @@ namespace WebApiAutores.Entidades
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "el campo {0} es requerido")]
-        [StringLength(maximumLength:10, ErrorMessage ="El campo {0} no debe tener más de {1} carácteres")]
+        [StringLength(maximumLength:120, ErrorMessage ="El campo {0} no debe tener más de {1} carácteres")]
         //[PrimeraLetraMayuscula]
 
         public string Nombre { get; set; }
@@ -38,11 +38,11 @@ namespace WebApiAutores.Entidades
                         new string[] { nameof(Nombre) });
                 }
             }
-            if (Mayor <= Menor)
-            {
-                yield return new ValidationResult("el valor Mayor debe ser mayor a Menor",
-                    new string[] { nameof(Mayor) });
-            }
+            //if (Mayor <= Menor)
+            //{
+            //    yield return new ValidationResult("el valor Mayor debe ser mayor a Menor",
+            //        new string[] { nameof(Mayor) });
+            //}
             
         }
     }
