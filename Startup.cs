@@ -21,8 +21,9 @@ namespace WebApiAutores
 
             services.AddTransient<IServicio, ServicioA>();
             //services.AddTransient<ServicioA>();
-
-
+            services.AddTransient<ServicioTransient>();
+            services.AddScoped<ServicioScoped>();
+            services.AddSingleton<ServicioSingleton>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();

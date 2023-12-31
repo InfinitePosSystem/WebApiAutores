@@ -11,15 +11,38 @@ namespace WebApiAutores.Controller
     {
         private readonly ApplicationsDbContext context;
         private readonly IServicio servicio;
+        private readonly ServicioTransient servicioTransient;
+        private readonly ServicioScoped servicioScoped;
+        private readonly ServicioSingleton servicioSingleton;
+        private readonly ILogger<AutoresController> logger;
 
-        public AutoresController(ApplicationsDbContext context, IServicio servicio)
+        public AutoresController(ApplicationsDbContext context, IServicio servicio,
+            ServicioTransient servicioTransient, ServicioScoped servicioScoped,
+            ServicioSingleton servicioSingleton, ILogger<AutoresController> logger)
         {
             this.context = context;
             this.servicio = servicio;
+            this.servicioTransient = servicioTransient;
+            this.servicioScoped = servicioScoped;
+            this.servicioSingleton = servicioSingleton;
+            this.logger = logger;
+        }
+        [HttpGet("GUID")]
+        public ActionResult ObtenerGuids()
+        {
+            return Ok(new {
+                AutoresControllerTrasient = servicioTransient.Guid,
+                AutoresControllerScoped = servicioScoped.Guid,
+                AutoresControllerSingleton = servicioSingleton.Guid,
+                ServicioA_Transient = servicio.ObtenerTrasient(),
+                ServicioA_Scoped = servicio.ObtenerScoped(),
+                ServicioA_Singleton = servicio.ObtenerSingleton()
+            });
         }
         [HttpGet]
         public async Task<ActionResult<List<Autor>>> Get()
         {
+            logger.LogInformation("Estamos obteniendo los autores");
             servicio.HacerTarea();
             return await context.Autores.Include(x => x.Libros).ToListAsync();
         }
