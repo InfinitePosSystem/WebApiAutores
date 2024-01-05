@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using WebApiAutores.Controller;
+using WebApiAutores.Filtros;
 using WebApiAutores.Midllewares;
 using WebApiAutores.Servicios;
 
@@ -15,7 +17,10 @@ namespace WebApiAutores
         public IConfiguration Configuration { get;}
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddJsonOptions(x =>
+            services.AddControllers(opciones =>
+            {
+                opciones.Filters.Add(typeof(FiltroDeExcepcion));
+            }).AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             services.AddDbContext<ApplicationsDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
@@ -25,7 +30,10 @@ namespace WebApiAutores
             services.AddTransient<ServicioTransient>();
             services.AddScoped<ServicioScoped>();
             services.AddSingleton<ServicioSingleton>();
-
+            services.AddTransient<MiFiltroDeAccion>();
+            services.AddHostedService<EscribirEnArchivo>();
+            services.AddResponseCaching();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -53,6 +61,8 @@ namespace WebApiAutores
             app.UseHttpsRedirection();
             
             app.UseRouting();
+
+            app.UseResponseCaching();
 
             app.UseAuthorization();
 
